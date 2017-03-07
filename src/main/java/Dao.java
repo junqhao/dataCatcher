@@ -15,6 +15,7 @@ import sun.rmi.server.UnicastServerRef;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -40,12 +41,11 @@ public class Dao {
      * @return 1 存在 0 不存在
      */
     public int getAuthorById(String id){
-        String sql = "select id from author where id=?";
-        int newid = Integer.parseInt(id);
-        Object[] args = new Object[]{newid};
-        int userid = 0;
-        userid = (int)jdbcTemplate.queryForObject(sql,args,Integer.class);
-        if(userid!=0){
+        String sql = "select count(*) from author where id=?";
+        Object[] args = new Object[]{id};
+        int count = 0;
+        count = (int)jdbcTemplate.queryForObject(sql,args,Integer.class);
+        if(count!=0){
             return 1;
         }else
             return 0;
@@ -57,12 +57,11 @@ public class Dao {
      * @return 1 存在 0 不存在
      */
     public int getPaperById(String id){
-        String sql = "select id from paper where id=?";
-        int newid = Integer.parseInt(id);
-        Object[] args = new Object[]{newid};
-        int paperid = 0;
-        paperid = (int)jdbcTemplate.queryForObject(sql,args,Integer.class);
-        if(paperid!=0){
+        String sql = "select count(*) from paper where id=?";
+        Object[] args = new Object[]{id};
+        int count = 0;
+        count = (int)jdbcTemplate.queryForObject(sql,args,Integer.class);
+        if(count!=0){
             return 1;
         }else
             return 0;
@@ -71,15 +70,16 @@ public class Dao {
     /**
      * 根据pub name查询pub是否已经存在
      * @param name
-     * @return 1 存在 0 不存在
+     * @return 非0 存在  0 不存在
      */
     public int getPubByName(String name){
-        String sql = "select `name` from pub where `name`=?";
+        String sql = "select count(*) from pub where `name`=?";
+        String sql2 = "select id from pub where `name`=?";
         Object[] args = new Object[]{name};
-        String pubname = null;
-        pubname = (String)jdbcTemplate.queryForObject(sql,args,String.class);
-        if(pubname!=null){
-            return 1;
+        int count = 0;
+        count = (int)jdbcTemplate.queryForObject(sql,args,Integer.class);
+        if(count!=0){
+            return (int)jdbcTemplate.queryForObject(sql2,args,Integer.class);
         }else
             return 0;
     }
@@ -114,12 +114,12 @@ public class Dao {
             jdbcTemplate.update(new PreparedStatementCreator() {
                 @Override
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                    PreparedStatement presta = connection.prepareStatement(sql);
+                    PreparedStatement presta = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                     presta.setString(1,pub.getNAME());
                     presta.setString(2,pub.getYEAR());
                     return presta;
                 }
-            });
+            },keyHolder);
             return keyHolder.getKey().intValue();
         }catch (Exception e){
             return 0;
@@ -146,12 +146,28 @@ public class Dao {
      * 插入ref_paper关联表
      * @param sourceid
      * @param refid
+     * @return 成功返回1 失败返回0
+     */
+    public int insertRefPaper(String sourceid,String refid){
+        String sql = "insert into ref_paper (source_paper,ref_paper) values (?,?)";
+        Object[] args = new Object[]{sourceid,refid};
+        try {
+            jdbcTemplate.update(sql,args);
+            return 1;
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    /**
+     * 插入cit_paper关联表
+     * @param sourceid
      * @param citid
      * @return 成功返回1 失败返回0
      */
-    public int insertRefPaper(int sourceid,int refid,int citid){
-        String sql = "insert into ref_paper (source_paper,ref_paper,cit_paper) values (?,?,?)";
-        Object[] args = new Object[]{sourceid,refid,citid};
+    public int insertCitPaper(String sourceid,String citid){
+        String sql = "insert into cit_paper (source_paper,cit_paper) values (?,?)";
+        Object[] args = new Object[]{sourceid,citid};
         try {
             jdbcTemplate.update(sql,args);
             return 1;
@@ -164,9 +180,9 @@ public class Dao {
      * 插入ref_author_paper关联表
      * @param authorid
      * @param paperid
-     * @return
+     * @return 成功返回1 失败返回0
      */
-    public int insertAuthorPaper(int authorid,int paperid){
+    public int insertAuthorPaper(String authorid,String paperid){
         String sql = "insert into ref_author_paper (author_id,paper_id) values (?,?)";
         Object[] args = new Object[]{authorid,paperid};
         try {

@@ -1,4 +1,5 @@
 import models.Author;
+import models.Pub;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
@@ -38,10 +39,17 @@ public class dbtest {
 //        for(Author aa:authors){
 //            System.out.println(aa.getINFO());
 //        }
-            Dao dao = (Dao) ctx.getBean("Dao");
-            int i = dao.getAuthorById("3");
-            System.out.println(i);
-            // dao.getAll();
+          //  Dao dao = (Dao) ctx.getBean("Dao");
+           // Pub pub = new Pub();
+           // pub.setNAME("asdf");
+           // pub.setYEAR("2005");
+           // int i  = dao.insertPub(pub);
+           // System.out.println(i);
+            //int i = dao.getAuthorById("3");
+           // System.out.println(i);
+          //   dao.getPaperById("1234234");
+      //  int i = Integer.valueOf("8132");
+      //  System.out.println(Integer.valueOf("81324487620"));
     }
 
 }

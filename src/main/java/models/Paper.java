@@ -4,16 +4,16 @@ package models;
  * Created by alexhao on 2017/3/6.
  */
 public class Paper {
-    private int ID;
+    private String ID;
     private String TITLE;
     private String ABSTRACT;
     private int PUB;
 
-    public int getID() {
+    public String getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    public void setID(String ID) {
         this.ID = ID;
     }
 

@@ -10,15 +10,15 @@ import java.io.Serializable;
  */
 
 public class Author {
-    private int ID;
+    private String ID;
     private String NAME;
     private String INFO;
 
-    public int getID() {
+    public String getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    public void setID(String ID) {
         this.ID = ID;
     }
 
