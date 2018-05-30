@@ -20,7 +20,7 @@ setThreads(int);
 start(int);   
 
 ### 断点爬取
-setResumable(true); 断点爬取在正式爬虫时应设置为true，防止宕机等原因导致程序终止，重新运行后原有的数据不丢失。默认为false。  
+setResumable(true); 断默认为false,每次启动爬虫都会重新爬取，true 从断点处继续爬取。  
 
 ### 搭建环境  
 建议使用intellij idea，同时使用Maven，jdk 1.7+   
